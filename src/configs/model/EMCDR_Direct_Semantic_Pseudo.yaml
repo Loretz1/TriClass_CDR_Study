@@ -1,0 +1,53 @@
+only_overlap_users: false
+k_cores: 3
+shuffle_user_sequence: true
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: false
+cold_start_eval: true
+valid_metric: Recall@20
+
+training_stages:
+  - name: source_training
+    state: SOURCE
+    epochs: 10
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+  - name: target_training
+    state: TARGET
+    epochs: 10
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+  - name: mapping_training
+    state: OVERLAP_USER
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+
+feature_dim: 64
+mlp_hidden_dim: 128
+mlp_layers: 0
+dropout: 0.2
+loss_type: bpr
+
+pseudo_cache_path: auto
+pseudo_loss_weight: [0.0, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1.0]
+pseudo_start_epoch: 0
+pseudo_num_per_batch: 16
+pseudo_sampler_seed: 999
+log_model_suffix: direct_semantic_pseudo
+
+hyper_parameters:
+  - pseudo_loss_weight

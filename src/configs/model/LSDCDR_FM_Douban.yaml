@@ -1,0 +1,69 @@
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: False
+cold_start_eval: True
+req_training: True
+
+training_stages:
+  - name: target_both
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: [0.001]
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0
+
+modalities:
+  - name: "CrossDomain_semantics_both_tag"
+    emb_model: "text-embedding-3-large"
+    emb_batch_size: 1024
+    emb_dim: 3072
+    emb_pca: 3072
+    normalize_semantic_emb: False
+    enabled: true
+
+dropout: 0.3
+
+# Original Book -> Music LSDCDR best profile.
+embedding_dim: 64
+timesteps: [20]
+beta_start: 0.0001
+beta_end: 0.7
+top_k_pos: [1]
+pseudo_start_epoch: [3]
+pseudo_num_per_batch: 16
+pseudo_rec_weight: 0.001
+ema_momentum: 0.999
+pseudo_update_interval: 5
+diff_weight: [0.15]
+beta_sche: ['linear']
+lambda_user_emb: [1]
+aggregator: ['user_attention']
+history_len: [150]
+mask_rate: [0.5]
+
+generative_seed_offset: 40000
+fm_sampling_steps: 20
+fm_solver: euler
+fm_noise_scale: 1.0
+fm_eval_noise_samples: 1
+log_model_suffix: generative_ablation_fm
+
+hyper_parameters:
+  - "timesteps"
+  - "top_k_pos"
+  - "pseudo_start_epoch"
+  - "training_stages.0.learning_rate"
+  - "diff_weight"
+  - "lambda_user_emb"
+  - "beta_sche"
+  - "aggregator"
+  - "history_len"
+  - "mask_rate"

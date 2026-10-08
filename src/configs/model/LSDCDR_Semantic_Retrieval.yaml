@@ -1,0 +1,36 @@
+# Original LSDCDR semantic embedding retrieval-only baseline.
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: False
+cold_start_eval: True
+req_training: False
+
+training_stages:
+  - name: retrieval_only
+    state: BOTH
+    epochs: 1
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.001
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0
+
+modalities:
+  - name: "CrossDomain_semantics_both_tag"
+    emb_model: "text-embedding-3-large"
+    emb_batch_size: 1024
+    emb_dim: 3072
+    emb_pca: 3072
+    normalize_semantic_emb: False
+    enabled: true
+
+semantic_retrieval_modality: "CrossDomain_semantics_both_tag"
+log_model_suffix: original_semantic_retrieval
+
+hyper_parameters: []

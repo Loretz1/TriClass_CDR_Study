@@ -1,0 +1,46 @@
+# End-to-end LLM4Rerank-style baseline: GMF candidate generator + API LLM reranker.
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: False
+cold_start_eval: True
+req_training: True
+
+training_stages:
+  - name: gmf_candidate_training
+    state: BOTH
+    epochs: 30
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.001
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0
+
+# Evaluate only after the GMF candidate generator is trained, so the LLM rerank API
+# is called once for the final valid+test cold-user pool.
+eval_step: 30
+stopping_step: 999
+topk: [5, 10, 20]
+
+feature_dim: 64
+src_loss_weight: 1.0
+tgt_loss_weight: 1.0
+
+candidate_top_m: 20
+candidate_build_batch_size: 256
+rerank_user_history_len: 20
+rerank_model: "gpt-5.2"
+rerank_max_retry: 3
+rerank_save_interval: 10
+num_workers: 2
+request_timeout: 180
+openai_max_retries: 0
+
+log_model_suffix: end2end_gmf_rerank
+
+hyper_parameters: []

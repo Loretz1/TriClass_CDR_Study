@@ -1,0 +1,119 @@
+# Dataset and evaluation settings
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.4
+t_cold_test: 0.4
+
+warm_eval: False
+cold_start_eval: True
+eval_batch_size: 512
+
+# Domain-specific set encoders are pretrained before joint LGCD training.
+training_stages:
+  - name: source_set_pretraining
+    state: SOURCE
+    epochs: 20
+    train_batch_size: 128
+    learner: adam
+    learning_rate: 0.001
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+    clip_grad_norm: {max_norm: 5.0}
+  - name: target_set_pretraining
+    state: TARGET
+    epochs: 20
+    train_batch_size: 128
+    learner: adam
+    learning_rate: 0.001
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+    clip_grad_norm: {max_norm: 5.0}
+  - name: lgcd_joint_training
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 128
+    learner: adam
+    learning_rate: [0.0003]
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+    clip_grad_norm: {max_norm: 5.0}
+
+# LGCD-specific target clues are generated from source training interactions only.
+# The cache lives under the current train/valid/test split directory.
+# Original LGCD used Baichuan2-7B-Chat + Jina embeddings; this benchmark
+# adaptation uses the repository's available Yunwu chat/embedding backend.
+modalities:
+  - name: "LGCD_target_clues"
+    llm_model: "gpt-4o-mini"
+    llm_temperature: 0.0
+    llm_num_workers: 4
+    llm_request_timeout: 180
+    llm_max_retry: 5
+    llm_failure_retry_rounds: 2
+    llm_failure_retry_workers: 2
+    llm_use_json_mode: true
+    llm_min_target_items: 5
+    llm_max_target_items: 10
+    llm_max_prompt_chars: 30000
+    llm_resume_cache: true
+    llm_checkpoint_fsync_every: 10
+    release_raw_data_after_extraction: true
+    item_text_max_chars: 8000
+    emb_model: "text-embedding-3-large"
+    emb_batch_size: 64
+    embedding_num_workers: 4
+    embedding_request_timeout: 180
+    embedding_max_retry: 6
+    embedding_checkpoint_fsync_every: 10
+    embedding_assembly_batch_size: 2048
+    openai_max_retries: 0
+    emb_dim: 3072
+    emb_pca: 3072
+    normalize_semantic_emb: False
+    enabled: true
+
+# Set encoders and pseudo-overlap construction
+embedding_dim: 64
+history_len: 40
+set_attention_heads: 4
+dropout: 0.2
+pseudo_top_k: [20]
+pseudo_retrieval_batch_size: 256
+pseudo_retrieval_item_batch_size: 8192
+pseudo_retrieval_device: auto
+pseudo_batch_size: 128
+overlap_batch_size: 64
+
+# LGCD conditional diffusion and MoE defaults from the paper
+diffusion_steps: 100
+diffusion_beta_min: 0.001
+diffusion_beta_max: 0.1
+diffusion_attention_heads: 4
+reverse_start_ratio: 0.7
+deterministic_inference: True
+num_experts: 8
+
+# Loss weights
+domain_pretrain_loss_weight: 1.0
+real_overlap_loss_weight: 1.0
+pseudo_overlap_loss_weight: [0.9]
+diffusion_loss_weight: 1.0
+guesser_loss_weight: 1.0
+alignment_loss_weight: 0.1
+recommendation_loss_weight: 1.0
+
+# Reuse the completed alpha80 stage-2 cache while searching the top-20 pseudo set.
+reuse_pretrained_stage_cache: True
+reuse_pretrained_until_stage: 2
+pretrained_stage_cache_dir: "pretrained_stage_cache"
+pretrained_stage_cache_name: "LGCD_NonSequential-Douban-Book+Music-alpha80-seed999-stage2-part3.pt"
+
+skip_hyper_tuple_num: 0
+log_model_suffix: "alpha80_top20_weight09"
+hyper_parameters:
+  - "training_stages.2.learning_rate"
+  - "pseudo_top_k"
+  - "pseudo_overlap_loss_weight"

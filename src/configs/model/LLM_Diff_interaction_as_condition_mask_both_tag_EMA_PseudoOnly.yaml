@@ -1,0 +1,73 @@
+# Dataset and evaluation settings
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: False
+cold_start_eval: True
+
+# Training setting
+training_stages:
+  - name: target_both
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: [0.001]
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0
+
+modalities:
+  - name: "CrossDomain_semantics_both_tag"
+    emb_model: "text-embedding-3-large"
+    emb_batch_size: 1024
+    emb_dim: 3072
+    emb_pca: 3072
+    normalize_semantic_emb: False
+    enabled: true
+
+# Model parameters
+embedding_dim: 64
+timesteps: [20]
+beta_start: 0.0001
+beta_end: 0.7
+dropout: 0.3
+
+top_k_pos: [1]
+# Strict pseudo-only training must start immediately because overlap supervision is disabled.
+pseudo_start_epoch: [0]
+pseudo_num_per_batch: 16
+pseudo_rec_weight: [1]
+ema_momentum: 0.999
+pseudo_update_interval: 5
+
+# 0.0 is strict Pseudo-only. Use a small value such as 0.001 for a weak
+# reliable-interaction anchor if the strict variant is too unstable.
+overlap_loss_weight: [0.0001]
+log_model_suffix: null
+
+# Hyperparameter setting inherited from the current LSDCDR configuration.
+diff_weight: [0.5]
+beta_sche: ["linear"]
+lambda_user_emb: [2]
+aggregator: ["user_attention"]
+history_len: [150]
+mask_rate: [0.3]
+
+hyper_parameters:
+  - "timesteps"
+  - "top_k_pos"
+  - "pseudo_start_epoch"
+  - "pseudo_rec_weight"
+  - "overlap_loss_weight"
+  - "beta_sche"
+  - "training_stages.0.learning_rate"
+  - "diff_weight"
+  - "lambda_user_emb"
+  - "aggregator"
+  - "history_len"
+  - "mask_rate"

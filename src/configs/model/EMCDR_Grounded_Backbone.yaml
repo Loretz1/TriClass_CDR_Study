@@ -1,0 +1,77 @@
+only_overlap_users: false
+k_cores: 3
+shuffle_user_sequence: true
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: false
+cold_start_eval: true
+valid_metric: Recall@20
+
+training_stages:
+  - name: source_training
+    state: SOURCE
+    epochs: 10
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+  - name: target_training
+    state: TARGET
+    epochs: 10
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+  - name: mapping_training
+    state: OVERLAP_USER
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+
+feature_dim: 64
+mlp_hidden_dim: 128
+mlp_layers: 0
+dropout: 0.2
+loss_type: bpr
+
+log_model_suffix: grounded_backbone_reference
+hyper_parameters: []
+
+domain_profiles:
+  Book+Music:
+    training_stages:
+      - name: source_training
+        state: SOURCE
+        epochs: 10
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.01
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.0
+      - name: target_training
+        state: TARGET
+        epochs: 10
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.01
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.0
+      - name: mapping_training
+        state: OVERLAP_USER
+        epochs: 1000
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.001
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.0
+    mlp_layers: 0
+  Clothing_Shoes_and_Jewelry+Sports_and_Outdoors: {}
+  Cell_Phones_and_Accessories+Electronics: {}

@@ -1,0 +1,120 @@
+format_version: 2
+data_path: ../data
+output_subdir: target_pattern_pseudo
+seed: 999
+
+split:
+  only_overlap_users: false
+  k_cores: 3
+  shuffle_user_sequence: true
+  warm_valid_ratio: 0
+  warm_test_ratio: 0
+  t_cold_valid: 0.1
+  t_cold_test: 0.1
+
+llm:
+  model: gpt-4o-mini
+  api_key: ""
+  base_url: ""
+  host_header: ""
+  workers: 8
+  max_retries: 5
+  retry_base_seconds: 2
+  request_timeout: 180
+  client_max_retries: 0
+  max_output_tokens: 4096
+  max_interests: 5
+  max_source_items_per_user: 256
+  max_user_prompt_chars: 240000
+  target_context_examples: 24
+  target_context_pattern_max_chars: 500
+  submission_batch_size: 256
+  failed_user_retry_rounds: 2
+  repair_invalid_interest_partitions: true
+  target_submission_batch_size: 128
+  failed_target_batch_retry_rounds: 2
+  summarize_target_items: true
+  target_items_per_prompt: 20
+
+embedding:
+  model: text-embedding-3-large
+  dimensions: 3072
+  api_key: ""
+  base_url: ""
+  host_header: ""
+  batch_size: 64
+  workers: 4
+  submission_batch_size: 64
+  failed_batch_retry_rounds: 2
+  max_retries: 8
+  retry_base_seconds: 2
+
+lightgcn:
+  embedding_dim: 64
+  layers: 2
+  learning_rate: 0.001
+  weight_decay: 0.0
+  batch_size: 4096
+  max_epochs: 100
+  patience: 10
+  validation_ratio: 0.1
+  samples_per_epoch: 200000
+  validation_samples: 50000
+
+bridge:
+  hidden_dim: 512
+  dropout: 0.1
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  batch_size: 256
+  max_epochs: 80
+  patience: 12
+  validation_ratio: 0.1
+  validation_users: 1024
+  validation_batch_size: 64
+  validation_top_k: 20
+  max_context_items: 32
+  users_per_epoch: 50000
+  negatives_per_positive: 8
+  ranking_temperature: 0.2
+  temperature: 0.07
+  alignment_weight: 0.2
+  contrastive_weight: 0.02
+  variance_weight: 0.1
+  minimum_output_std: 0.05
+
+retrieval:
+  official_top_k: 5
+  cached_top_k: 100
+  user_batch_size: 128
+
+domain_profiles:
+  Book+Music:
+    llm:
+      workers: 8
+      target_items_per_prompt: 20
+      max_source_items_per_user: 1024
+      max_output_tokens: 8192
+      compact_user_prompt_min_items: 64
+      interest_pattern_max_chars: 240
+      interest_response_max_chars: 10000
+      retry_include_invalid_response: false
+      retry_temperature: 0.1
+    retrieval:
+      user_batch_size: 128
+  Clothing_Shoes_and_Jewelry+Sports_and_Outdoors:
+    llm:
+      workers: 8
+  Electronics+Cell_Phones_and_Accessories:
+    llm:
+      workers: 12
+    retrieval:
+      user_batch_size: 64
+  Cell_Phones_and_Accessories+Electronics:
+    llm:
+      workers: 8
+      target_items_per_prompt: 10
+    bridge:
+      users_per_epoch: 100000
+    retrieval:
+      user_batch_size: 64

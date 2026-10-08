@@ -1,0 +1,68 @@
+# Fresh end-to-end runtime analysis for LLM4CDSR on Douban Book -> Music.
+# Remove every cached modality file beginning with
+# CrossDomain_semantics_LLM4CDSR_end2end_runtime before a timed run.
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: False
+cold_start_eval: True
+req_training: True
+
+eval_step: 1
+stopping_step: 20
+eval_batch_size: 4096
+runtime_record_dir: "../experiment_records/runtime_analysis_book_music_20260715/llm4cdsr"
+require_fresh_runtime_cache: True
+
+training_stages:
+  - name: target_both
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.001
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0
+
+modalities:
+  - name: "CrossDomain_semantics_LLM4CDSR_end2end_runtime"
+    llm_chat_model: "gpt-4o-mini"
+    emb_model: "text-embedding-3-large"
+    emb_batch_size: 1024
+    emb_dim: 3072
+    emb_pca: 3072
+    normalize_semantic_emb: False
+    cluster_k: 2
+    max_retry: 2
+    profile_num_workers: 20
+    repair_max_rounds: 3
+    repair_sleep_seconds: 2
+    profile_repair_char_limits: [0, 12000, 4000]
+    profile_failure_fallback_text: "No reliable preference summary is available."
+    profile_fallback_max_prompts: 10
+    request_timeout: 60
+    embedding_request_timeout: 60
+    embedding_num_workers: 10
+    embedding_max_retry: 3
+    embedding_fallback_num_workers: 1
+    embedding_fallback_max_retry: 12
+    openai_max_retries: 0
+    enabled: true
+
+embedding_dim: 64
+user_llm_emb_w: 0.001
+item_llm_emb_w: 0.001
+gamma: 0.2
+tau: 0.2
+
+# Fixed best Book -> Music setting from the completed LLM4CDSR grid search.
+alpha: 0.001
+beta: 0.001
+history_len: 150
+
+log_model_suffix: end2end_runtime_book_music

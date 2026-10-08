@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\caption{Effect of prompt design and tag stability on Amazon Cloth$\rightarrow$Sport.}
+\label{tab:prompt_formulation}
+\setlength{\tabcolsep}{7pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabular}{c|c|c|c|c}
+\hline
+Method & Prompt Type & Tag Count & R@20 & N@20 \\
+\hline
+\multirow{4}{*}{LSDCDR} & Long-form Profile & - & 0.0730 & 0.0663 \\
+\cline{2-5}
+ & \multirow{3}{*}{\shortstack{Concept-Level\\Interest Tags}} & 1--2 & 0.0723 & 0.0650 \\
+ &  & \textbf{2--4 (ours)} & \textbf{0.0763} & \textbf{0.0700} \\
+ &  & 4--6 & 0.0622 & 0.0584 \\
+\hline
+\end{tabular}
+\end{table}

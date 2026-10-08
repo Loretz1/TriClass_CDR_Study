@@ -1,0 +1,51 @@
+# Overwrite Dataset Setting
+only_overlap_users: False # Whether to construct a fully-overlapped (warm-start) or partially-overlapped (cold-start) user set
+k_cores: 3 # only work with only_overlap_users, for dual domain k-cores, at least 3 otherwise can not split train/valid/test
+shuffle_user_sequence: True  # weather shuffle users' item sequence before split train/valid/test dataset
+warm_valid_ratio: 0 # Ratio of interactions from warm users in the target domain to be assigned to the validation set
+warm_test_ratio: 0 # Ratio of interactions from warm users in the target domain to be assigned to the test set
+t_cold_valid: 0.1 # cold user in the target domain valid set
+t_cold_test: 0.1 # cold user in the target domain test set
+
+# 1. Eval Setting
+warm_eval: False  # Whether to enable warm user evaluation
+cold_start_eval: True # Whether to enable cold start user evaluation
+
+# 2. Multi-stage Training Setting
+# (state, epochs, train_batch_size, learner, learning_rate, learning_rate_scheduler, weight_decay) is required for each stage
+# clip_grad_norm is optional
+training_stages:
+  - name: overlap_training
+    state: OVERLAP
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: [0.001, 0.01]
+    learning_rate_scheduler: [ 1.0, 50 ]
+    weight_decay: 0.0
+
+# 3. Fixed Model Parameters Setting
+feature_dim: 64
+schedule_sampler_name: "lossaware"
+diffusion_steps: 32
+noise_schedule: "trunc_lin"
+dropout: 0.1
+num_blocks: 4
+rescale_timesteps: "True"
+lambda_history: 1
+#log_model_suffix: without_LossDiff
+
+# 4. Model Hyperparameter Grid Search Setting
+maxlen_source: [40, 20, 10]
+#maxlen_source: [100,80,60,40]
+num_cluster: [6,4,2]
+lambda_con: [0.2, 0.5]
+lambda_intent: [0.3,0.6]
+
+# hyperparameter search space
+hyper_parameters:
+  - training_stages.0.learning_rate
+  - maxlen_source
+  - num_cluster
+  - lambda_con
+  - lambda_intent

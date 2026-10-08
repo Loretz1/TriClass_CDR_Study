@@ -1,0 +1,55 @@
+only_overlap_users: false
+k_cores: 3
+shuffle_user_sequence: true
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: false
+cold_start_eval: true
+valid_metric: Recall@20
+
+training_stages:
+  - name: target_both
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.001
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.000001
+
+feature_dim: 64
+dropout: 0.3
+lambda_a: 0.5
+history_len: 20
+aggregator: user_attention
+mask_rate: 0.4
+lambda_loss: 1.0
+
+log_model_suffix: grounded_backbone_reference
+hyper_parameters: []
+
+domain_profiles:
+  Book+Music:
+    history_len: 20
+    aggregator: mean
+    mask_rate: 0.2
+    lambda_loss: 0.7
+  Clothing_Shoes_and_Jewelry+Sports_and_Outdoors:
+    lambda_loss: 1.0
+  Cell_Phones_and_Accessories+Electronics:
+    history_len: 20
+    aggregator: user_attention
+    mask_rate: 0.4
+    lambda_loss: 0.8
+    training_stages:
+      - name: target_both
+        state: BOTH
+        epochs: 1000
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.01
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.000001

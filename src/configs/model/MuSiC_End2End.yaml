@@ -1,0 +1,64 @@
+# MuSiC end-to-end runtime variant: generate its own user summaries and item embeddings.
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: False
+cold_start_eval: True
+req_training: True
+
+training_stages:
+  - name: target_both
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: [0.01]
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0
+
+modalities:
+  - name: "CrossDomain_semantics_music_end2end"
+    emb_model: "text-embedding-3-large"
+    emb_batch_size: 1024
+    emb_dim: 3072
+    emb_pca: 3072
+    normalize_semantic_emb: False
+    profile_num_workers: 20
+    repair_max_rounds: 0
+    repair_sleep_seconds: 0
+    embedding_request_timeout: 60
+    embedding_num_workers: 1
+    embedding_max_retry: 3
+    openai_max_retries: 0
+    enabled: true
+
+music_llm_model: "gpt-4o-mini"
+
+embedding_dim: 64
+timesteps: 20
+beta_start: 0.0001
+beta_end: 0.5
+dropout: 0.3
+
+diff_weight: [8]
+beta_sche: ["sqrt"]
+lambda_user_emb: [1]
+aggregator: ['user_attention']
+history_len: [40]
+mask_rate: [0.3]
+
+log_model_suffix: end2end_own_item_emb
+
+hyper_parameters:
+  - "training_stages.0.learning_rate"
+  - "diff_weight"
+  - "lambda_user_emb"
+  - "beta_sche"
+  - "aggregator"
+  - "history_len"
+  - "mask_rate"

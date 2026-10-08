@@ -1,0 +1,70 @@
+only_overlap_users: false
+k_cores: 3
+shuffle_user_sequence: true
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: false
+cold_start_eval: true
+valid_metric: Recall@20
+
+training_stages:
+  - name: both_training
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.0001
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0000001
+
+embedding_size: 64
+neg_seq_len: 1
+diffuser_type: mlp1
+timestep: 2000
+uncon_w: 5
+uncon_p: 0.1
+beta_sche: linear
+dropout: 0.1
+layer_norm: 1
+n_heads: 4
+n_layers: 1
+mean_pooling: 0
+loss_n: bpr
+gamma: 1
+
+pseudo_cache_path: auto
+pseudo_loss_weight: [0.0, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1.0]
+pseudo_start_epoch: 0
+pseudo_num_per_batch: 16
+pseudo_sampler_seed: 999
+log_model_suffix: target_pattern_pseudo
+
+hyper_parameters:
+  - pseudo_loss_weight
+
+domain_profiles:
+  Clothing_Shoes_and_Jewelry+Sports_and_Outdoors:
+    disable_diffusion: true
+    aggregator: self_attention
+    history_len: 10
+  Electronics+Cell_Phones_and_Accessories:
+    disable_diffusion: false
+    aggregator: mean
+    history_len: 40
+  Cell_Phones_and_Accessories+Electronics:
+    disable_diffusion: false
+    aggregator: user_attention
+    history_len: 10
+    gamma: 1
+    training_stages:
+      - name: both_training
+        state: BOTH
+        epochs: 1000
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.0001
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.0000001

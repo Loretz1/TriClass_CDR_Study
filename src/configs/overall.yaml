@@ -1,0 +1,30 @@
+# general
+#gpu_id: 1
+use_gpu: True
+seed: [999]
+skip_hyper_tuple_num: 0
+
+save_recommended_topk: True
+recommend_topk: 'recommend_topk/'
+log_dir: './log/'
+log_model_suffix: ~
+
+embedding_size: 64
+req_training: True
+
+# Stage cache is disabled by default. Enable it in a model YAML only when
+# searched hyper-parameters do not affect earlier training stages.
+reuse_pretrained_stage_cache: False
+reuse_pretrained_until_stage: 0
+pretrained_stage_cache_dir: 'pretrained_stage_cache'
+
+# evaluation settings
+eval_step: 1
+stopping_step: 20
+metrics: ["Recall", "NDCG", "Precision", "MAP"]
+topk: [5, 10, 20, 50]
+valid_metric: Recall@20
+eval_batch_size: 4096
+
+# iteration parameters
+hyper_parameters: ["seed"]

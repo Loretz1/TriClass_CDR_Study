@@ -1,0 +1,57 @@
+# UniCDR pseudo-supervision quality diagnostic: random non-hit pseudo positives.
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: False
+cold_start_eval: True
+req_training: True
+
+log_dir: './log_unicdr_pseudo_quality/'
+
+training_stages:
+  - name: target_both
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: [0.001]
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.000001
+
+feature_dim: 64
+dropout: 0.3
+lambda_a: 0.5
+
+pseudo_set_size: 5
+pseudo_start_epoch: [0]
+pseudo_num_per_batch: [256]
+pseudo_rec_weight: [0, 0.01, 0.1, 0.3]
+pseudo_seed: 999
+
+target_mf_epochs: 50
+target_mf_lr: 0.001
+target_mf_batch_size: 2048
+target_mf_embedding_dim: 64
+target_mf_weight_decay: 0
+
+history_len: [40]
+aggregator: ['user_attention']
+mask_rate: [0.3]
+lambda_loss: [1]
+
+log_model_suffix: pseudo_quality_random
+
+hyper_parameters:
+  - "training_stages.0.learning_rate"
+  - "history_len"
+  - "aggregator"
+  - "mask_rate"
+  - "lambda_loss"
+  - "pseudo_start_epoch"
+  - "pseudo_num_per_batch"
+  - "pseudo_rec_weight"

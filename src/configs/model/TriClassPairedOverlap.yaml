@@ -1,0 +1,20 @@
+reference_config: configs/model/GroundedTriClass.yaml
+seed: 999
+ratios: [0.2, 0.4, 0.6, 0.8, 1.0]
+num_threads: 4
+protocol: nested_overlap_target_history_removal_v1
+tasks:
+  ClothSport:
+    domains: [Clothing_Shoes_and_Jewelry, Sports_and_Outdoors]
+    backbones:
+      EMCDR: [0.1, 0.25]
+      UniCDR: [0.1, 0.0]
+      CD_CDR_Normal: [1.0, 0.0]
+      CDRIB: [0.1, 0.25]
+  PhoneElec:
+    domains: [Cell_Phones_and_Accessories, Electronics]
+    backbones:
+      EMCDR: [0.1, 0.0]
+      UniCDR: [1.0, 0.5]
+      CD_CDR_Normal: [1.0, 0.25]
+      CDRIB: [1.0, 0.5]

@@ -1,0 +1,58 @@
+format_version: 1
+data_path: ../data
+source_subdir: target_pattern_pseudo
+output_subdir: grounded_static_confidence
+seed: 999
+
+split:
+  only_overlap_users: false
+  k_cores: 3
+  shuffle_user_sequence: true
+  warm_valid_ratio: 0
+  warm_test_ratio: 0
+  t_cold_valid: 0.1
+  t_cold_test: 0.1
+
+lightgcn:
+  embedding_dim: 64
+  layers: 2
+  learning_rate: 0.001
+  weight_decay: 0.0
+  max_epochs: 100
+  patience: 10
+  validation_ratio: 0.1
+  samples_per_epoch: 200000
+  validation_samples: 50000
+
+evidence:
+  candidate_width: 100
+  neighbor_count: 20
+  neighbor_temperature: 0.1
+  max_neighbor_target_items: 64
+  batch_size: 32
+
+calibrator:
+  user_split: [0.6, 0.2, 0.2]
+  learning_rate: 0.01
+  weight_decay: 0.0001
+  batch_size: 65536
+  inference_batch_size: 262144
+  max_epochs: 200
+  patience: 25
+  minimum_delta: 0.000001
+  positive_weight_cap: 100.0
+
+diagnostics:
+  confidence_bins: 10
+  cutoffs: [1, 5, 10, 20, 50, 100]
+
+domain_profiles:
+  Book+Music:
+    evidence:
+      batch_size: 32
+  Clothing_Shoes_and_Jewelry+Sports_and_Outdoors:
+    evidence:
+      batch_size: 32
+  Cell_Phones_and_Accessories+Electronics:
+    evidence:
+      batch_size: 16

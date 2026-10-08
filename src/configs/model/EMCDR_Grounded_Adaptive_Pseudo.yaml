@@ -1,0 +1,126 @@
+only_overlap_users: false
+k_cores: 3
+shuffle_user_sequence: true
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: false
+cold_start_eval: true
+valid_metric: Recall@20
+
+training_stages:
+  - name: source_training
+    state: SOURCE
+    epochs: 10
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+  - name: target_training
+    state: TARGET
+    epochs: 10
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+  - name: mapping_training
+    state: OVERLAP_USER
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+
+feature_dim: 64
+mlp_hidden_dim: 128
+mlp_layers: 0
+dropout: 0.2
+loss_type: bpr
+
+pseudo_cache_path: auto
+grounded_confidence_cache_path: auto
+pseudo_loss_weight: 0.001
+pseudo_start_epoch: 0
+pseudo_num_per_batch: 16
+pseudo_sampler_seed: 999
+confidence_source: overlap
+confidence_power: 0.5
+confidence_epsilon: 0.00000001
+
+adaptive_setting:
+  - j1_b0
+  - j1_b0005
+  - j1_b001
+  - j1_b003
+  - j05_b0005
+  - j05_b001
+  - j05_b003
+  - j025_b001
+  - j025_b003
+  - j0_b001
+  - j0_b003
+  - j0_b005
+adaptive_stage_id: 2
+adaptive_hidden_dim: 32
+adaptive_residual_loss_weight: 1.0
+adaptive_residual_l2: 0.0001
+adaptive_gate_temperature: 0.025
+adaptive_gate_floor: 0.0
+residual_candidate_pool_size: 100
+residual_retained_user_fraction: 0.05
+residual_top_k: 1
+residual_sampling_power: 1.0
+residual_loss_confidence_scale: 1.0
+residual_num_per_batch: 512
+residual_score_scale_clip: 20.0
+reuse_pretrained_stage_cache: true
+reuse_pretrained_until_stage: 2
+log_model_suffix: grounded_stage2_adaptive
+
+hyper_parameters:
+  - adaptive_setting
+
+domain_profiles:
+  Book+Music:
+    training_stages:
+      - name: source_training
+        state: SOURCE
+        epochs: 10
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.01
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.0
+      - name: target_training
+        state: TARGET
+        epochs: 10
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.01
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.0
+      - name: mapping_training
+        state: OVERLAP_USER
+        epochs: 1000
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.001
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.0
+    mlp_layers: 0
+    pseudo_loss_weight: 0.001
+    confidence_source: overlap
+    confidence_power: 1.0
+  Clothing_Shoes_and_Jewelry+Sports_and_Outdoors:
+    pseudo_loss_weight: 0.001
+    confidence_source: overlap
+    confidence_power: 0.5
+  Cell_Phones_and_Accessories+Electronics:
+    pseudo_loss_weight: 0.01
+    confidence_source: overlap
+    confidence_power: 0.5

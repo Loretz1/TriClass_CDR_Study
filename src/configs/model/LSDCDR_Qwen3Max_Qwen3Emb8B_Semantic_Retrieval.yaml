@@ -1,0 +1,53 @@
+# Full-variant Qwen3-Max + DashScope embedding semantic retrieval-only baseline.
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: False
+cold_start_eval: True
+req_training: False
+
+training_stages:
+  - name: retrieval_only
+    state: BOTH
+    epochs: 1
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.001
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0
+
+modalities:
+  - name: "CrossDomain_semantics_both_tag_qwen3max_qwen3emb8b_src_only_tgt_only"
+    generation_scope: "src_only_tgt_only"
+    llm_chat_model: "qwen3-max"
+    emb_model: "text-embedding-v4"
+    dashscope_emb_model: "text-embedding-v4"
+    dashscope_api_key: ""
+    dashscope_api_key_env: "DASHSCOPE_API_KEY"
+    dashscope_base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    dashscope_max_batch_size: 10
+    emb_batch_size: 10
+    emb_dim: 2048
+    emb_pca: 2048
+    force_embedding_dimensions: true
+    embedding_encoding_format: "float"
+    normalize_semantic_emb: False
+    max_retry: 3
+    num_workers: 2
+    request_timeout: 180
+    embedding_request_timeout: 180
+    openai_max_retries: 0
+    dashscope_sdk_max_retries: 0
+    dashscope_max_retries: 5
+    embedding_num_workers: 4
+    enabled: true
+
+semantic_retrieval_modality: "CrossDomain_semantics_both_tag_qwen3max_qwen3emb8b_src_only_tgt_only"
+log_model_suffix: qwen3max_qwen3emb8b_semantic_retrieval
+
+hyper_parameters: []

@@ -1,0 +1,121 @@
+only_overlap_users: false
+k_cores: 3
+shuffle_user_sequence: true
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: false
+cold_start_eval: true
+valid_metric: Recall@20
+stopping_step: 20
+
+training_stages:
+  - name: backbone_training
+    state: BOTH
+    epochs: 4
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.0001
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0000001
+  - name: grounded_residual_training
+    state: OVERLAP_USER
+    epochs: 100
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.05
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.000001
+
+embedding_size: 64
+neg_seq_len: 1
+diffuser_type: mlp1
+timestep: 2000
+uncon_w: 5
+uncon_p: 0.1
+beta_sche: linear
+dropout: 0.1
+layer_norm: 1
+n_heads: 4
+n_layers: 1
+mean_pooling: 0
+loss_n: bpr
+gamma: 0.5
+disable_diffusion: false
+aggregator: user_attention
+history_len: 10
+
+normal_fusion_attention_weight: 0.5
+normal_direct_score_weight: 0.5
+normal_diffusion_scale_clip: 20.0
+inference_noise_seed: 2027
+
+pseudo_cache_path: auto
+grounded_confidence_cache_path: auto
+confidence_source: combined
+confidence_epsilon: 0.00000001
+residual_candidate_pool_size: 100
+residual_retained_user_fraction: [0.05, 0.10]
+residual_top_k: 1
+residual_sampling_power: 1.0
+residual_loss_confidence_scale: 1.0
+residual_num_per_batch: 512
+residual_beta: [0.05, 0.10, 0.20]
+residual_l2: 0.0001
+residual_score_scale_clip: 20.0
+residual_stage_id: 1
+
+reuse_pretrained_stage_cache: true
+reuse_pretrained_until_stage: 1
+log_model_suffix: normal_grounded_stage2_residual
+hyper_parameters:
+  - residual_retained_user_fraction
+  - residual_beta
+
+domain_profiles:
+  Clothing_Shoes_and_Jewelry+Sports_and_Outdoors:
+    disable_diffusion: true
+    aggregator: self_attention
+    history_len: 10
+    gamma: 0.5
+    training_stages:
+      - name: backbone_training
+        state: BOTH
+        epochs: 141
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.0001
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.0000001
+      - name: grounded_residual_training
+        state: OVERLAP_USER
+        epochs: 100
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.05
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.000001
+  Cell_Phones_and_Accessories+Electronics:
+    disable_diffusion: false
+    aggregator: user_attention
+    history_len: 10
+    gamma: 0.5
+    training_stages:
+      - name: backbone_training
+        state: BOTH
+        epochs: 4
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.0001
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.0000001
+      - name: grounded_residual_training
+        state: OVERLAP_USER
+        epochs: 100
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.05
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.000001

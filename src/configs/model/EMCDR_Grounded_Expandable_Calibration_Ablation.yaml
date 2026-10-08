@@ -1,0 +1,151 @@
+only_overlap_users: false
+k_cores: 3
+shuffle_user_sequence: true
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: false
+cold_start_eval: true
+valid_metric: Recall@20
+
+training_stages:
+  - name: source_training
+    state: SOURCE
+    epochs: 10
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+  - name: target_training
+    state: TARGET
+    epochs: 10
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+  - name: mapping_training
+    state: OVERLAP_USER
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+
+feature_dim: 64
+mlp_hidden_dim: 128
+mlp_layers: 0
+dropout: 0.2
+loss_type: bpr
+
+pseudo_cache_path: auto
+grounded_confidence_cache_path: auto
+pseudo_loss_weight: 0.001
+pseudo_start_epoch: 0
+pseudo_num_per_batch: 16
+pseudo_sampler_seed: 999
+confidence_source: overlap
+confidence_power: 0.5
+confidence_epsilon: 0.00000001
+
+adaptive_setting: j1_b0
+adaptive_stage_id: 2
+adaptive_hidden_dim: 32
+adaptive_residual_loss_weight: 1.0
+adaptive_residual_l2: 0.0001
+adaptive_gate_temperature: 0.025
+adaptive_gate_floor: 0.0
+residual_candidate_pool_size: 100
+residual_retained_user_fraction: 0.05
+residual_top_k: 1
+residual_sampling_power: 1.0
+residual_loss_confidence_scale: 1.0
+residual_num_per_batch: 512
+residual_score_scale_clip: 20.0
+
+v3_setting: broad
+calibration_ablation: [mean_all, without_semantic, without_overlap]
+ema_teacher_decay: 0.995
+expansion_start_epoch: 10
+expansion_interval: 10
+expansion_max_rounds: 3
+expansion_top_k: 1
+max_pseudo_items_per_user: 8
+dynamic_user_batch_size: 128
+dynamic_calibrator_candidate_width: 20
+dynamic_calibrator_user_split: [0.6, 0.2, 0.2]
+dynamic_calibrator_learning_rate: 0.01
+dynamic_calibrator_weight_decay: 0.0001
+dynamic_calibrator_batch_size: 65536
+dynamic_calibrator_inference_batch_size: 262144
+dynamic_calibrator_max_epochs: 60
+dynamic_calibrator_patience: 8
+dynamic_calibrator_minimum_delta: 0.000001
+dynamic_positive_weight_cap: 100.0
+dynamic_calibration_quantile: 0.90
+dynamic_min_validation_precision: 0.05
+dynamic_min_validation_hits: 3
+dynamic_min_confidence: 0.0
+dynamic_anchor_quantile: 0.0
+dynamic_max_neighbor_target_items: 64
+
+reuse_pretrained_stage_cache: true
+reuse_pretrained_until_stage: 2
+log_model_suffix: grounded_stage3_calibration_ablation
+hyper_parameters:
+  - calibration_ablation
+
+domain_profiles:
+  Book+Music:
+    training_stages:
+      - name: source_training
+        state: SOURCE
+        epochs: 10
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.01
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.0
+      - name: target_training
+        state: TARGET
+        epochs: 10
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.01
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.0
+      - name: mapping_training
+        state: OVERLAP_USER
+        epochs: 1000
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.001
+        learning_rate_scheduler: [1.0, 50]
+        weight_decay: 0.0
+    mlp_layers: 0
+    adaptive_setting: j1_b0
+    pretrained_stage_cache_name: EMCDR_Grounded_Adaptive_Pseudo-Douban-Book+Music-seed999-stage2.pt
+    pseudo_loss_weight: 0.001
+    confidence_source: overlap
+    confidence_power: 1.0
+    dynamic_user_batch_size: 128
+  Clothing_Shoes_and_Jewelry+Sports_and_Outdoors:
+    adaptive_setting: j1_b0
+    v3_setting: broad
+    pretrained_stage_cache_name: EMCDR_Grounded_Adaptive_Pseudo-Amazon2014-Clothing_Shoes_and_Jewelry+Sports_and_Outdoors-seed999-stage2.pt
+    pseudo_loss_weight: 0.001
+    confidence_source: overlap
+    confidence_power: 0.5
+    dynamic_user_batch_size: 128
+  Cell_Phones_and_Accessories+Electronics:
+    adaptive_setting: j1_b0
+    v3_setting: strict
+    pretrained_stage_cache_name: EMCDR_Grounded_Adaptive_Pseudo-Amazon2014-Cell_Phones_and_Accessories+Electronics-seed999-stage2.pt
+    pseudo_loss_weight: 0.01
+    confidence_source: overlap
+    confidence_power: 0.5
+    dynamic_user_batch_size: 64

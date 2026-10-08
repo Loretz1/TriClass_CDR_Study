@@ -1,0 +1,10 @@
+from models.lsdcdr_gpt52_te3large import (
+    extract_CrossDomain_semantics_both_tag_gpt52_te3large_src_only_tgt_only_modality_data,
+    generate_CrossDomain_semantics_both_tag_gpt52_te3large_src_only_tgt_only_embs,
+    generate_CrossDomain_semantics_both_tag_gpt52_te3large_src_only_tgt_only_final_embs,
+)
+from models.lsdcdr_semantic_retrieval import LSDCDRSemanticRetrievalBase
+
+
+class LSDCDR_GPT52_TE3Large_Semantic_Retrieval(LSDCDRSemanticRetrievalBase):
+    modality_name = "CrossDomain_semantics_both_tag_gpt52_te3large_src_only_tgt_only"

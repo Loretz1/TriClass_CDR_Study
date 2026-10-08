@@ -1,0 +1,71 @@
+# Fresh end-to-end runtime analysis for MuSiC on Douban Book -> Music.
+# Remove every cached modality file beginning with
+# CrossDomain_semantics_music_end2end_runtime_users_only before a timed run.
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: False
+cold_start_eval: True
+req_training: True
+
+# Match the LSDCDR runtime run's optimization/evaluation batch settings.
+eval_step: 1
+stopping_step: 20
+eval_batch_size: 4096
+runtime_record_dir: "../experiment_records/runtime_analysis_book_music_20260715/music"
+require_fresh_runtime_cache: True
+
+training_stages:
+  - name: target_both
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.001
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0
+
+modalities:
+  - name: "CrossDomain_semantics_music_end2end_runtime_users_only"
+    emb_model: "text-embedding-3-large"
+    emb_batch_size: 1024
+    emb_dim: 3072
+    emb_pca: 3072
+    normalize_semantic_emb: False
+    profile_num_workers: 20
+    repair_max_rounds: 3
+    repair_sleep_seconds: 2
+    profile_repair_char_limits: [0, 12000, 4000]
+    profile_failure_fallback_text: "User preference information is unavailable."
+    profile_fallback_max_users: 10
+    request_timeout: 60
+    embedding_request_timeout: 60
+    embedding_num_workers: 10
+    embedding_max_retry: 3
+    embedding_fallback_num_workers: 1
+    embedding_fallback_max_retry: 12
+    openai_max_retries: 0
+    enabled: true
+
+music_llm_model: "gpt-4o-mini"
+
+embedding_dim: 64
+timesteps: 20
+beta_start: 0.0001
+beta_end: 0.5
+dropout: 0.3
+
+# Fixed best Book -> Music setting from the completed MuSiC grid search.
+diff_weight: 1
+beta_sche: "sqrt"
+lambda_user_emb: 1
+aggregator: "user_attention"
+history_len: 150
+mask_rate: 0.5
+
+log_model_suffix: end2end_runtime_book_music

@@ -1,0 +1,62 @@
+# Overwrite Dataset Setting
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+# 1. Eval Setting
+warm_eval: False
+cold_start_eval: True
+valid_metric: NDCG@20
+
+# 2. Training Setting
+# Fixed to the best available CDRIB Sport -> Cloth backbone:
+# seed=999, lr=0.0001, dropout=0.3, beta=1.5, weight_decay=0.001.
+training_stages:
+  - name: both_training
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: [0.00007, 0.0001, 0.00016]
+    learning_rate_scheduler: [0.95, 10]
+    weight_decay: 0.001
+
+modalities:
+  - name: "CrossDomain_semantics_both_tag"
+    emb_model: "text-embedding-3-large"
+    emb_batch_size: 1024
+    emb_dim: 3072
+    emb_pca: 3072
+    normalize_semantic_emb: False
+    enabled: true
+
+# 3. Fixed Model Parameters Setting
+feature_dim: 64
+hidden_dim: 64
+GNN: 3
+leakey: 0.1
+user_batch_size: 64
+bce: False
+margin: 0.3
+dropout: [0.25, 0.3]
+beta: [1.3, 1.7]
+
+# 4. Fixed LLM pseudo-supervision setting
+pseudo_build_batch_size: 2048
+
+# Sport -> Cloth wider selection search B: backbone optimization region.
+top_k_pos: 1
+pseudo_start_epoch: 25
+pseudo_num_per_batch: 8
+pseudo_rec_weight: 0.0015
+
+log_model_suffix: llm_init_sport_cloth_selection_wide_b
+
+hyper_parameters:
+  - training_stages.0.learning_rate
+  - dropout
+  - beta

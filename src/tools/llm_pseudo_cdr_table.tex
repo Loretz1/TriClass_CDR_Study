@@ -1,0 +1,23 @@
+\begin{table*}[t]
+\centering
+\caption{Effect of replacing LSDCDR's diffusion-based self-evolving transfer module with conventional CDR backbones under the same pseudo supervision.}
+\label{tab:same_pseudo_non_diffusion}
+\setlength{\tabcolsep}{2.8pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{c|c|cc|cc|cc|cc|cc|cc}
+\hline
+\multicolumn{2}{c|}{\textbf{Dataset}} & \multicolumn{8}{c|}{\textbf{Amazon}} & \multicolumn{4}{c}{\textbf{Douban}} \\
+\hline
+\multicolumn{2}{c|}{\textbf{Domain: Src$\rightarrow$Tgt}} & \multicolumn{2}{c|}{\textbf{Cloth $\rightarrow$ Sport}} & \multicolumn{2}{c|}{\textbf{Sport $\rightarrow$ Cloth}} & \multicolumn{2}{c|}{\textbf{Elec $\rightarrow$ Phone}} & \multicolumn{2}{c|}{\textbf{Phone $\rightarrow$ Elec}} & \multicolumn{2}{c|}{\textbf{Book $\rightarrow$ Music}} & \multicolumn{2}{c}{\textbf{Music $\rightarrow$ Book}} \\
+\cline{1-2}
+\textbf{Pseudo Sup.} & \textbf{Transfer Module} & \textbf{R@20} & \textbf{N@20} & \textbf{R@20} & \textbf{N@20} & \textbf{R@20} & \textbf{N@20} & \textbf{R@20} & \textbf{N@20} & \textbf{R@20} & \textbf{N@20} & \textbf{R@20} & \textbf{N@20} \\
+\hline
+\multirow{5}{*}{Same LLM-init.} & EMCDR & 0.0172 & 0.0175 & 0.0286 & 0.0225 & 0.0616 & 0.0474 & 0.0400 & 0.0469 & 0.0200 & 0.0848 & 0.0491 & 0.1521 \\
+ & PTUPCDR & 0.0211 & 0.0187 & 0.0300 & 0.0245 & 0.0587 & 0.0484 & 0.0402 & 0.0487 & 0.0171 & 0.0633 & 0.0338 & 0.0913 \\
+ & UniCDR & 0.0136 & 0.0155 & 0.0158 & 0.0148 & 0.0929 & 0.0808 & 0.0468 & 0.0560 & 0.0244 & 0.0906 & 0.0344 & 0.1306 \\
+ & \textbf{Diffusion +} & \multirow{2}{*}{\textbf{0.0763}} & \multirow{2}{*}{\textbf{0.0700}} & \multirow{2}{*}{\textbf{0.0621}} & \multirow{2}{*}{\textbf{0.0559}} & \multirow{2}{*}{\textbf{0.0994}} & \multirow{2}{*}{\textbf{0.0820}} & \multirow{2}{*}{\textbf{0.0667}} & \multirow{2}{*}{\textbf{0.0762}} & \multirow{2}{*}{\textbf{0.0285}} & \multirow{2}{*}{\textbf{0.0958}} & \multirow{2}{*}{\textbf{0.0580}} & \multirow{2}{*}{\textbf{0.1575}} \\
+ & \textbf{Self-Evolution (ours)} &  &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+\end{tabular}
+}
+\end{table*}

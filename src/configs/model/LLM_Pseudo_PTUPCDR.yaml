@@ -1,0 +1,67 @@
+# Overwrite Dataset Setting
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+# 1. Eval Setting
+warm_eval: False
+cold_start_eval: True
+
+# 2. Multi-stage Training Setting
+training_stages:
+  - name: source_training
+    state: SOURCE
+    epochs: [10]
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+  - name: target_training
+    state: TARGET
+    epochs: [10]
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.01
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+  - name: mapping_training
+    state: OVERLAP
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: [0.001]
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0.0
+
+modalities:
+  - name: "CrossDomain_semantics_both_tag"
+    emb_model: "text-embedding-3-large"
+    emb_batch_size: 1024
+    emb_dim: 3072
+    emb_pca: 3072
+    normalize_semantic_emb: False
+    enabled: true
+
+# 3. Fixed Model Parameters Setting
+feature_dim: 64
+meta_dim: 128
+
+top_k_pos: 5
+pseudo_start_epoch: 10
+pseudo_num_per_batch: 64
+pseudo_rec_weight: 0.001
+pseudo_build_batch_size: 2048
+
+# 4. Model Hyperparameter Grid Search Setting
+history_len: [40]
+
+hyper_parameters:
+  - training_stages.0.epochs
+  - training_stages.1.epochs
+  - training_stages.2.learning_rate
+  - history_len

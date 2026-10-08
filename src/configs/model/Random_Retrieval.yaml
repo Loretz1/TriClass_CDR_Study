@@ -1,0 +1,27 @@
+# Random target-item ranking baseline for cold-start evaluation.
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: False
+cold_start_eval: True
+req_training: False
+
+training_stages:
+  - name: retrieval_only
+    state: BOTH
+    epochs: 1
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.001
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0
+
+random_retrieval_seed: 999
+log_model_suffix: random_retrieval
+
+hyper_parameters: []

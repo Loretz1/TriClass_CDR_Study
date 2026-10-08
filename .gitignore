@@ -1,0 +1,60 @@
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Editors and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Experiment outputs and logs
+/experiment_records/
+/src/runs/
+/src/log/
+/src/log_tmp/
+/src/log_run_tmp/
+/src/log_old_dataset/
+/src/log_*pseudo_quality/
+/src/a_log_temp/
+/src/pseudo_quality_records/
+/src/pseudo_quality_records_tmp/
+/src/pretrained_stage_cache/
+/src/triclass*_runs/
+/src/binary_triclass_runs/
+/src/record.pkl
+*.log
+*.pid
+
+# Datasets, generated embeddings, and archived source packages
+/data/
+/LSDCDR/
+
+# Local reference papers and experiment spreadsheet
+/2412_Reformulating_Cold_Start_.pdf
+/20266_Reformulating_Cold_Start.pdf
+/unicdr_lsdcdr_pseudo_quality_record_with_withoutLLM_20260624(1).xlsx
+
+# Local credentials (keep sanitized templates versionable)
+/.local_credentials/
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Local scratch files
+/.codex_tmp/

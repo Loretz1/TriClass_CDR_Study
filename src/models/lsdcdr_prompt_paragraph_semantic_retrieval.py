@@ -1,0 +1,10 @@
+from models.lsdcdr_prompt_paragraph import (
+    extract_CrossDomain_semantics_both_tag_prompt_paragraph_src_only_tgt_only_modality_data,
+    generate_CrossDomain_semantics_both_tag_prompt_paragraph_src_only_tgt_only_embs,
+    generate_CrossDomain_semantics_both_tag_prompt_paragraph_src_only_tgt_only_final_embs,
+)
+from models.lsdcdr_semantic_retrieval import LSDCDRSemanticRetrievalBase
+
+
+class LSDCDR_Prompt_Paragraph_Semantic_Retrieval(LSDCDRSemanticRetrievalBase):
+    modality_name = "CrossDomain_semantics_both_tag_prompt_paragraph_src_only_tgt_only"

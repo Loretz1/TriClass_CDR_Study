@@ -1,0 +1,60 @@
+# Overwrite Dataset Setting
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+# 1. Eval Setting
+warm_eval: False
+cold_start_eval: True
+req_training: True
+
+# 2. Multi-stage Training Setting
+training_stages:
+  - name: target_both
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: [0.001]
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0
+
+# 3. Fixed Model Parameters Setting
+embedding_dim: 64
+timesteps: [200]
+beta_start: 0.0001
+beta_end: 0.5
+dropout: 0.3
+
+top_k_pos: [5]
+pseudo_start_epoch: [80]
+pseudo_num_per_batch: 16
+pseudo_rec_weight: 0.001
+ema_momentum: 0.999
+pseudo_update_interval: 5
+random_pseudo_seed: 999
+
+# 4. Model Hyperparameter Grid Search Setting
+diff_weight: [0.5]
+beta_sche: ['cosine']
+lambda_user_emb: [0.001]
+aggregator: ['user_attention']
+history_len: [40]
+mask_rate: [0.3]
+
+# Cloth -> Sports Table 2 best setting. Config loader adds seed automatically.
+hyper_parameters:
+  - "timesteps"
+  - "top_k_pos"
+  - "pseudo_start_epoch"
+  - "beta_sche"
+  - "training_stages.0.learning_rate"
+  - "diff_weight"
+  - "lambda_user_emb"
+  - "aggregator"
+  - "history_len"
+  - "mask_rate"

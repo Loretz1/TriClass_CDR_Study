@@ -1,0 +1,25 @@
+# Reuse the completed TriClass candidates, features, labels and user partitions.
+reference_config: configs/model/GroundedTriClass.yaml
+reference_run: triclass_runs/20260908
+output_prefix: grounded_binary
+seed: 999
+num_threads: 4
+variants: [hit_only, hit_near]
+
+# Fixed full-TriClass configurations; this ablation does not search parameters.
+# Each pair is [pseudo_loss_weight, original_triclass_near_support_weight].
+tasks:
+  ClothSport:
+    domains: [Clothing_Shoes_and_Jewelry, Sports_and_Outdoors]
+    backbones:
+      EMCDR: [0.1, 0.25]
+      UniCDR: [0.1, 0.0]
+      CD_CDR_Normal: [1.0, 0.0]
+      CDRIB: [0.1, 0.25]
+  PhoneElec:
+    domains: [Cell_Phones_and_Accessories, Electronics]
+    backbones:
+      EMCDR: [0.1, 0.0]
+      UniCDR: [1.0, 0.5]
+      CD_CDR_Normal: [1.0, 0.25]
+      CDRIB: [1.0, 0.5]

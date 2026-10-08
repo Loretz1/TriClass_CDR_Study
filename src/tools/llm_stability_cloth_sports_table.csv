@@ -1,0 +1,5 @@
+Method,Prompt Type,Tag Count,Cloth->Sport:R@20,Cloth->Sport:N@20
+LSDCDR,Long-form Profile,-,0.0730,0.0663
+,\shortstack{Concept-Level\\Interest Tags},1--2,0.0723,0.0650
+,,2--4 (ours),0.0763,0.0700
+,,4--6,0.0622,0.0584

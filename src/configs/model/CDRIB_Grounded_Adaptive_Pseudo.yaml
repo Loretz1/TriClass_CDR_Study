@@ -1,0 +1,117 @@
+only_overlap_users: false
+k_cores: 3
+shuffle_user_sequence: true
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: false
+cold_start_eval: true
+valid_metric: Recall@20
+
+training_stages:
+  - name: both_training
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.001
+    learning_rate_scheduler: [0.95, 10]
+    weight_decay: 0.0001
+
+feature_dim: 64
+hidden_dim: 64
+GNN: 3
+leakey: 0.1
+user_batch_size: 64
+bce: false
+margin: 0.3
+
+pseudo_cache_path: auto
+grounded_confidence_cache_path: auto
+pseudo_loss_weight: 0.001
+pseudo_start_epoch: 0
+pseudo_num_per_batch: 16
+pseudo_sampler_seed: 999
+confidence_source: overlap
+confidence_power: 2.0
+confidence_epsilon: 0.00000001
+
+adaptive_setting:
+  - j1_b0
+  - j1_b0005
+  - j1_b001
+  - j1_b003
+  - j05_b0005
+  - j05_b001
+  - j05_b003
+  - j025_b001
+  - j025_b003
+  - j0_b001
+  - j0_b003
+  - j0_b005
+adaptive_stage_id: 0
+adaptive_hidden_dim: 32
+adaptive_residual_loss_weight: 1.0
+adaptive_residual_l2: 0.0001
+adaptive_gate_temperature: 0.025
+adaptive_gate_floor: 0.0
+residual_candidate_pool_size: 100
+residual_retained_user_fraction: 0.05
+residual_top_k: 1
+residual_sampling_power: 1.0
+residual_loss_confidence_scale: 1.0
+residual_num_per_batch: 512
+residual_score_scale_clip: 20.0
+log_model_suffix: grounded_stage2_adaptive
+
+hyper_parameters:
+  - adaptive_setting
+
+domain_profiles:
+  Book+Music:
+    pseudo_loss_weight: 0.001
+    confidence_source: overlap
+    confidence_power: 1.0
+    dropout: 0.3
+    beta: 1.0
+    training_stages:
+      - name: both_training
+        state: BOTH
+        epochs: 1000
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.0005
+        learning_rate_scheduler: [0.95, 10]
+        weight_decay: 0.0001
+  Clothing_Shoes_and_Jewelry+Sports_and_Outdoors:
+    pseudo_loss_weight: 0.001
+    confidence_source: overlap
+    confidence_power: 2.0
+    dropout: 0.2
+    beta: 1.5
+    training_stages:
+      - name: both_training
+        state: BOTH
+        epochs: 1000
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.001
+        learning_rate_scheduler: [0.95, 10]
+        weight_decay: 0.0001
+  Cell_Phones_and_Accessories+Electronics:
+    pseudo_loss_weight: 0.0001
+    confidence_source: combined
+    confidence_power: 1.0
+    dropout: 0.3
+    beta: 1.0
+    training_stages:
+      - name: both_training
+        state: BOTH
+        epochs: 1000
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.001
+        learning_rate_scheduler: [0.95, 10]
+        weight_decay: 0.0001

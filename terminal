@@ -1,0 +1,132 @@
+
+
+# Cloth & Sports
+CUDA_VISIBLE_DEVICES=0 nohup python -u main.py --model LLM_Diff_interaction_as_condition_mask_both_tag_EMA --dataset Amazon2014 --domains Clothing_Shoes_and_Jewelry Sports_and_Outdoors >runAmazon.log 2>&1 &
+CUDA_VISIBLE_DEVICES=0 nohup python -u main.py --model LLM_Diff_interaction_as_condition_mask --dataset Amazon2014 --domains Sports_and_Outdoors Clothing_Shoes_and_Jewelry >runAmazon2.log 2>&1 &
+
+CUDA_VISIBLE_DEVICES=0 nohup python -u main.py --model LLM4CDSR_Retrieval --dataset Amazon2014 --domains Electronics Cell_Phones_and_Accessories >runAmazon.log 2>&1 &
+CUDA_VISIBLE_DEVICES=0 nohup python -u main.py --model LLM_Pseudo_PTUPCDR --dataset Amazon2014 --domains  Cell_Phones_and_Accessories Electronics >runAmazon.log 2>&1 &
+
+# Toy & Video
+CUDA_VISIBLE_DEVICES=1 nohup python -u main.py --model Disco --dataset Amazon2014 --domains Toys_and_Games Video_Games >runAmazon.log 2>&1 &
+CUDA_VISIBLE_DEVICES=1 nohup python -u main.py --model UniCDR --dataset Amazon2014 --domains Video_Games Toys_and_Games >runAmazon2.log 2>&1 &
+
+# Electronic & Phone
+CUDA_VISIBLE_DEVICES=0 nohup python -u main.py --model LLM_Diff_interaction_as_condition_mask_both_tag_EMA_elec --dataset Amazon2014 --domains Electronics Cell_Phones_and_Accessories >runAmazon.log 2>&1 &
+CUDA_VISIBLE_DEVICES=1 nohup python -u main.py --model LLM_Diff_ddim --dataset Amazon2014 --domains Cell_Phones_and_Accessories Electronics >runAmazon2.log 2>&1 &
+
+# Health & Baby
+CUDA_VISIBLE_DEVICES=1 nohup python -u main.py --model LLM_Diff_ddim --dataset Amazon2014 --domains Health_and_Personal_Care Baby >runAmazon.log 2>&1 &
+CUDA_VISIBLE_DEVICES=1 nohup python -u main.py --model LLM_Diff_ddim --dataset Amazon2014 --domains Baby Health_and_Personal_Care >runAmazon2.log 2>&1 &
+
+# 133 Domain Pair Test
+CUDA_VISIBLE_DEVICES=0 nohup python -u main.py --model LightGCN --dataset Amazon2014 --domains Kindle_Store Movies_and_TV >runAmazon.log 2>&1 &
+
+# Douban
+CUDA_VISIBLE_DEVICES=1 nohup python -u main.py --model CD_CDR_simple --dataset Douban --domains Book Music >runDouban.log 2>&1 &
+CUDA_VISIBLE_DEVICES=1 nohup python -u main.py --model CD_CDR --dataset Douban --domains Music Book >runDouban2.log 2>&1 &
+
+# Debug
+--model EMCDR --dataset Amazon2014 --domains Clothing_Shoes_and_Jewelry Sports_and_Outdoors
+--model EMCDR --dataset Amazon2014 --domains Toys_and_Games Video_Games
+--model PicCDR --dataset Amazon2014 --domains Health_and_Personal_Care Baby
+
+
+Books, Electronics, Movies_and_TV, CDs_and_Vinyl,
+Clothing_Shoes_and_Jewelry, Home_and_Kitchen, Kindle_Store,
+Sports_and_Outdoors, Cell_Phones_and_Accessories,
+Health_and_Personal_Care, Toys_and_Games, Video_Games,
+Tools_and_Home_Improvement, Beauty, Apps_for_Android,
+Office_Products, Pet_Supplies, Automotive,
+Grocery_and_Gourmet_Food, Patio_Lawn_and_Garden, Baby,
+Digital_Music, Musical_Instruments, Amazon_Instant_Video
+
+
+# Qwen
+CUDA_VISIBLE_DEVICES=0,1 \
+python -m vllm.entrypoints.openai.api_server \
+  --model /data/guqiwen/Qwen3/data/models/Qwen3-8B \
+  --served-model-name Qwen3-8B \
+  --dtype bfloat16 \
+  --max-model-len 40960 \
+  --tensor-parallel-size 2 \
+  --gpu-memory-utilization 0.70 \
+  --max-num-seqs 8 \
+  --trust-remote-code \
+  --port 8000
+
+
+
+
+1. G修改试试；直接用sem emb召回放在backbone呢？
+2. 伪交互的置信度及其更新（集合本身、置信度、可更新）
+      推荐实施顺序
+  1. 先只实现 (c^{sem}+c^{ov}) 和重叠用户校准，验证置信度是否真的与命中率正相关。
+  2. 再接入固定候选、置信度加权训练，暂不扩展。
+  3. 最后加入 EMA、(c^{model}) 和全物品候选扩展。
+  4. 优先在 Cloth→Sport 上验证，再扩展到 Phone→Elec。
+  5. 记录 Precision@K、Recall@K、AUPRC、Brier/ECE、候选新增率和推荐 R@20/N@20。
+
+3. 构造（u，i，j）
+4. 源域语义的迁移
+  迁移函数的训练（丰富训练数据等）
+  通过基向量用户还原冷用户的兴趣
+
+
+
+
+
+todo
+1. 直接用popularity插入backbone
+2. CDCDR backbone的修改
+3. v3 置信度的更新（可信校准函数的变化、可信校准函数是否有用？平均？去掉某一证据？是否会变好？）
+
+
+
+热门召回提供较强的共性监督，G 可能提供部分个体化补充
+“这条伪监督可能正确吗”和“这条伪监督能帮助当前模型吗”
+高质量伪监督能够被模型利用；当前需要解决的是生成的监督是否足够可靠，以及不同质量的监督应该以多大强度参与训练
+
+todo
+1. 新的版本多路召回 以及 三类伪监督标签（4类证据） 方案的效果；
+2. 多智能体关系图？
+
+
+todo
+× 1. 多路找回，每一路的贡献都有多少（消融去掉中间某一路，看性能变化）
+2. 
+  2. “解决重叠用户稀缺”与“完全依赖重叠用户训练分类器”存在张力
+  方法并没有摆脱重叠监督，而是把有限重叠监督放大到冷用户。建议将论文表述改为：
+  Alleviating the overlap-supervision bottleneck
+
+  而不是声称不再需要重叠用户。
+  必须增加重叠用户比例实验，例如：
+  \[
+  1\%,\ 5\%,\ 10\%,\ 20\%,\ 50\%,\ 100\%.
+  \]审稿人真正关心的是：当重叠用户很少时，三分类器是否仍然可靠。
+  3. 当前“校准器”严格说是分类器
+  一层 softmax + 交叉熵并不自动意味着概率已经校准。若论文使用“confidence calibration”这一表述，需要报告：
+  - ECE；
+  - Brier Score；
+  - Reliability diagram；
+  - 不同置信度区间的 Hit/Near 比例；
+  - AUPRC，尤其是 Hit 类。
+  否则建议叫做 Tri-level Support Estimator，比“可信校准函数”更准确。
+
+  优先级最高的是：
+  1. 验证集选参、测试集单次评估，并运行至少 3–5 个随机种子。（看一下代码是否有这个问题：有，后续发布的时候需要修改一下这个地方）
+  2. 不同重叠用户比例下的性能和置信度质量。（TriClass 重叠标注量敏感性实验）
+    还需要做：随着重叠监督减少，Pure backbone明显退化，而加入插件后退化更缓，低重叠比例下仍有稳定增益。（完整重叠监督预算：Pure / TriClass 配套实验）
+    结论： 符合预期，Pure backbone明显退化，而加入插件后退化更缓（UniCDR结论不一致）
+  3. 二分类与三分类对比，证明 Near 类有用。（二分类与三分类对比：Near 类作用）
+    结论：符合预期，Near类有用
+  4. 四项证据逐项移除：(TriClass 四项证据逐项移除)
+    - w/o Semantic；
+    - w/o \(G\)；
+    - w/o Overlap Vote；
+    - w/o Popularity。
+    结论：G的用处比较小，Semantic的用处明显，Overlap Vote在大数据集明显，小数据集不明显，Popularity在小数据集明显，大数据集不明显。
+  5. 单路召回、三路简单合并和三路可信筛选对比，不同方法的召回集合总量一致（单路召回、三路简单合并和三路可信筛选对比（数量对齐））
+  6. 与相同伪交互数量、相同用户覆盖率的 Popularity/Random 对照。（优先级低）
+  7. 至少增加一个不同类型的数据集，例如 Douban Book→Music，避免结论只依赖 Amazon。
+

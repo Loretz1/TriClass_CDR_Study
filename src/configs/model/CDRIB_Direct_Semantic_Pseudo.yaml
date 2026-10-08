@@ -1,0 +1,77 @@
+only_overlap_users: false
+k_cores: 3
+shuffle_user_sequence: true
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: false
+cold_start_eval: true
+valid_metric: Recall@20
+
+training_stages:
+  - name: both_training
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: 0.001
+    learning_rate_scheduler: [0.95, 10]
+    weight_decay: 0.0001
+
+feature_dim: 64
+hidden_dim: 64
+GNN: 3
+leakey: 0.1
+user_batch_size: 64
+bce: false
+margin: 0.3
+
+pseudo_cache_path: auto
+pseudo_loss_weight: [0.0, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1.0]
+pseudo_start_epoch: 0
+pseudo_num_per_batch: 16
+pseudo_sampler_seed: 999
+log_model_suffix: direct_semantic_pseudo
+
+hyper_parameters:
+  - pseudo_loss_weight
+
+domain_profiles:
+  Clothing_Shoes_and_Jewelry+Sports_and_Outdoors:
+    dropout: 0.2
+    beta: 1.5
+    training_stages:
+      - name: both_training
+        state: BOTH
+        epochs: 1000
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.001
+        learning_rate_scheduler: [0.95, 10]
+        weight_decay: 0.0001
+  Electronics+Cell_Phones_and_Accessories:
+    dropout: 0.3
+    beta: 0.5
+    training_stages:
+      - name: both_training
+        state: BOTH
+        epochs: 1000
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.001
+        learning_rate_scheduler: [0.95, 10]
+        weight_decay: 0.001
+  Cell_Phones_and_Accessories+Electronics:
+    dropout: 0.3
+    beta: 1.0
+    training_stages:
+      - name: both_training
+        state: BOTH
+        epochs: 1000
+        train_batch_size: 2048
+        learner: adam
+        learning_rate: 0.001
+        learning_rate_scheduler: [0.95, 10]
+        weight_decay: 0.0001

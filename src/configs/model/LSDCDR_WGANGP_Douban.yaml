@@ -1,0 +1,80 @@
+only_overlap_users: False
+k_cores: 3
+shuffle_user_sequence: True
+warm_valid_ratio: 0
+warm_test_ratio: 0
+t_cold_valid: 0.1
+t_cold_test: 0.1
+
+warm_eval: False
+cold_start_eval: True
+req_training: True
+
+training_stages:
+  - name: target_both
+    state: BOTH
+    epochs: 1000
+    train_batch_size: 2048
+    learner: adam
+    learning_rate: [0.001]
+    learning_rate_scheduler: [1.0, 50]
+    weight_decay: 0
+
+modalities:
+  - name: "CrossDomain_semantics_both_tag"
+    emb_model: "text-embedding-3-large"
+    emb_batch_size: 1024
+    emb_dim: 3072
+    emb_pca: 3072
+    normalize_semantic_emb: False
+    enabled: true
+
+dropout: 0.3
+
+# Original Book -> Music LSDCDR best profile.
+embedding_dim: 64
+timesteps: [20]
+beta_start: 0.0001
+beta_end: 0.7
+top_k_pos: [1]
+pseudo_start_epoch: [3]
+pseudo_num_per_batch: 16
+pseudo_rec_weight: 0.001
+ema_momentum: 0.999
+pseudo_update_interval: 5
+diff_weight: [0.15]
+beta_sche: ['linear']
+lambda_user_emb: [1]
+aggregator: ['user_attention']
+history_len: [150]
+mask_rate: [0.5]
+
+generative_seed_offset: 20000
+wgan_hidden_dim: [128, 256]
+wgan_reconstruction_weight: 1.0
+wgan_adversarial_weight: [0.0001, 0.001]
+wgan_gp_weight: 10.0
+wgan_critic_lr: 0.0001
+wgan_critic_batch_size: 256
+wgan_critic_steps: [1, 3]
+wgan_critic_grad_clip: 5.0
+wgan_normalize_inputs: True
+wgan_center_scores: True
+wgan_eval_noise_samples: 4
+wgan_eval_noise_seed_offset: 7919
+log_model_suffix: generative_ablation_gan
+
+hyper_parameters:
+  - "timesteps"
+  - "top_k_pos"
+  - "pseudo_start_epoch"
+  - "training_stages.0.learning_rate"
+  - "diff_weight"
+  - "lambda_user_emb"
+  - "beta_sche"
+  - "aggregator"
+  - "history_len"
+  - "mask_rate"
+  - "wgan_hidden_dim"
+  - "wgan_adversarial_weight"
+  - "wgan_critic_steps"

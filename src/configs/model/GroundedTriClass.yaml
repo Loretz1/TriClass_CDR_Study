@@ -1,0 +1,82 @@
+data_path: ../data
+source_subdir: target_pattern_pseudo
+output_subdir: grounded_triclass
+seed: 999
+num_threads: 4
+
+split:
+  only_overlap_users: false
+  k_cores: 3
+  shuffle_user_sequence: true
+  warm_valid_ratio: 0
+  warm_test_ratio: 0
+  t_cold_valid: 0.1
+  t_cold_test: 0.1
+
+# Target teachers exclude every overlap user's target edges. The classifier
+# itself is trained on overlap users, not on target-only simulated queries.
+lightgcn:
+  embedding_dim: 64
+  layers: 2
+  learning_rate: 0.001
+  weight_decay: 0.0
+  batch_size: 4096
+  max_epochs: 100
+  patience: 10
+  validation_ratio: 0.1
+  samples_per_epoch: 200000
+  validation_samples: 50000
+
+bridge:
+  hidden_dim: 512
+  dropout: 0.1
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  batch_size: 256
+  max_epochs: 80
+  patience: 12
+  validation_ratio: 0.1
+  validation_users: 1024
+  validation_batch_size: 64
+  validation_top_k: 20
+  max_context_items: 32
+  users_per_epoch: 50000
+  negatives_per_positive: 8
+  ranking_temperature: 0.2
+  temperature: 0.07
+  alignment_weight: 0.2
+  contrastive_weight: 0.02
+  variance_weight: 0.1
+  minimum_output_std: 0.05
+
+candidates:
+  per_source_k: 50
+  batch_size: 32
+  neighbor_count: 20
+  neighbor_temperature: 0.1
+
+labels:
+  neighbor_k: 20
+
+calibrator:
+  user_split: [0.6, 0.2, 0.2]
+  learning_rate: 0.01
+  weight_decay: 0.0001
+  batch_size: 65536
+  max_epochs: 200
+  patience: 25
+  minimum_delta: 0.000001
+
+# Select thresholds on overlap validation users only. This proxy criterion
+# maximizes hit_precision + eta * near_fraction subject to a coverage floor.
+selection:
+  top_k: 5
+  eta_values: [0.0, 0.25, 0.5]
+  thresholds: [0.0, 0.001, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.4, 0.6]
+  minimum_user_coverage: 0.2
+
+domain_profiles:
+  Clothing_Shoes_and_Jewelry+Sports_and_Outdoors: {}
+  Cell_Phones_and_Accessories+Electronics:
+    candidates:
+      batch_size: 16

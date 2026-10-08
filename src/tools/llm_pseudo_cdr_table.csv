@@ -1,0 +1,5 @@
+Pseudo Sup.,Transfer Module,Amazon2014:Clothing_Shoes_and_Jewelry->Sports_and_Outdoors:R@20,Amazon2014:Clothing_Shoes_and_Jewelry->Sports_and_Outdoors:N@20,Amazon2014:Sports_and_Outdoors->Clothing_Shoes_and_Jewelry:R@20,Amazon2014:Sports_and_Outdoors->Clothing_Shoes_and_Jewelry:N@20,Amazon2014:Electronics->Cell_Phones_and_Accessories:R@20,Amazon2014:Electronics->Cell_Phones_and_Accessories:N@20,Amazon2014:Cell_Phones_and_Accessories->Electronics:R@20,Amazon2014:Cell_Phones_and_Accessories->Electronics:N@20,Douban:Book->Music:R@20,Douban:Book->Music:N@20,Douban:Music->Book:R@20,Douban:Music->Book:N@20
+Same LLM-init.,EMCDR,0.0172,0.0175,0.0286,0.0225,0.0616,0.0474,0.0400,0.0469,0.0200,0.0848,0.0491,0.1521
+Same LLM-init.,PTUPCDR,0.0211,0.0187,0.0300,0.0245,0.0587,0.0484,0.0402,0.0487,0.0171,0.0633,0.0338,0.0913
+Same LLM-init.,UniCDR,0.0136,0.0155,0.0158,0.0148,0.0929,0.0808,0.0468,0.0560,0.0244,0.0906,0.0344,0.1306
+Same LLM-init.,Diffusion + Self-Evolution,0.0763,0.0700,0.0621,0.0559,0.0994,0.0820,0.0667,0.0762,0.0285,0.0958,0.0580,0.1575
