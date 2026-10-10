@@ -1,0 +1,2 @@
+# Preserve generated target-pattern caches without storing large Git blobs.
+data/**/target_pattern_pseudo/** filter=lfs diff=lfs merge=lfs -text

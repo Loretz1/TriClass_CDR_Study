@@ -41,7 +41,10 @@ Thumbs.db
 *.pid
 
 # Datasets, generated embeddings, and archived source packages
-/data/
+/data/**
+!/data/**/
+!/data/**/target_pattern_pseudo/**
+/data/**/target_pattern_pseudo/**/*.log
 /LSDCDR/
 
 # Local reference papers and experiment spreadsheet
